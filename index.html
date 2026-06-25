@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#1c1917">
+  <meta name="description" content="WaiterFlow — Умный ассистент официанта. Голосовое управление заказами.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="WaiterFlow">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <title>WaiterFlow — Ассистент официанта</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    (function() {
+      try {
+        var s = localStorage.getItem('waiterflow-state');
+        if (s) { var t = JSON.parse(s).theme; if(t) document.documentElement.setAttribute('data-theme', t); }
+        else if (window.matchMedia('(prefers-color-scheme: light)').matches) document.documentElement.setAttribute('data-theme', 'light');
+      } catch(e) {}
+    })();
+  </script>
+</head>
+<body>
+
+  <!-- Install Banner -->
+  <div id="install-banner" class="install-banner hidden" role="alert" aria-label="Установить приложение">
+    <div class="install-banner-text">
+      <div class="install-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2L8 6h3v6h2V6h3l-4-4zm-7 10v8a2 2 0 002 2h10a2 2 0 002-2v-8h-2v8H7v-8H5z"/></svg>
+      </div>
+      <div>
+        <strong>Установить WaiterFlow</strong><br>
+        <small style="color:var(--color-text-muted)">Работает офлайн, быстрый доступ</small>
+      </div>
+    </div>
+    <div class="install-banner-actions">
+      <button id="install-btn" class="install-btn" type="button">Установить</button>
+      <button id="install-dismiss" class="install-dismiss" type="button">Позже</button>
+    </div>
+  </div>
+
+  <!-- App Layout -->
+  <div id="app" class="app-layout">
+
+    <!-- Desktop Sidebar -->
+    <aside class="sidebar" role="navigation" aria-label="Основная навигация">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM5 10a1 1 0 0 0-1 1 8 8 0 0 0 7 7.93V21h-2a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-2v-2.07A8 8 0 0 0 20 11a1 1 0 1 0-2 0 6 6 0 0 1-12 0 1 1 0 0 0-1-1z"/></svg>
+        </div>
+        <span class="sidebar-brand">WaiterFlow</span>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-nav="home" type="button" aria-label="Зал">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          <span>Зал</span>
+        </button>
+        <button class="nav-item" data-nav="orders" type="button" aria-label="Заказы">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <span>Заказы</span>
+        </button>
+        <button class="nav-item" data-nav="settings" type="button" aria-label="Настройки">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>Настройки</span>
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <span class="voice-dot"></span>
+        <span>Голос: доступен</span>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <!-- ====================== HOME PAGE ====================== -->
+      <section data-page="home" class="page active" role="region" aria-label="Зал">
+        <header class="page-header">
+          <h1>🍽️ Зал</h1>
+          <div class="header-actions">
+            <button id="header-theme-toggle" class="btn-icon" type="button" aria-label="Переключить тему">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            </button>
+          </div>
+        </header>
+
+        <div class="page-body">
+          <!-- Hero -->
+          <div class="hero-card">
+            <h2 class="hero-text" id="greeting-text">Добрый день! 👋</h2>
+            <p class="hero-sub" id="greeting-sub">Смена начинается</p>
+          </div>
+
+          <!-- Stats -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon">📋</div>
+              <div class="stat-value" id="stat-active">0</div>
+              <div class="stat-label">Активных</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">🍳</div>
+              <div class="stat-value" id="stat-kitchen">0</div>
+              <div class="stat-label">На кухне</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">✅</div>
+              <div class="stat-value" id="stat-ready">0</div>
+              <div class="stat-label">Готовых</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">💰</div>
+              <div class="stat-value" id="stat-revenue">0 ₽</div>
+              <div class="stat-label">Касса</div>
+            </div>
+          </div>
+
+          <!-- Tables Grid -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">🪑 Столы</h3>
+              <span style="font-size:var(--text-xs);color:var(--color-text-muted);">Нажмите для заказа</span>
+            </div>
+            <div id="tables-grid" class="tables-grid"></div>
+          </div>
+
+          <!-- Recent Orders -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">📌 Активные заказы</h3>
+              <button class="btn-secondary" data-nav="orders" type="button" style="padding:4px 12px;font-size:var(--text-xs);">Все заказы →</button>
+            </div>
+            <div id="recent-orders" class="task-list"></div>
+          </div>
+
+          <!-- Voice Commands -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">🎤 Голосовые команды</h3>
+            </div>
+            <div class="voice-commands-grid">
+              <div class="voice-command-item">
+                <div>
+                  <div class="voice-command-phrase">"Заказ стол 5 борщ"</div>
+                  <div class="voice-command-action">Создать заказ</div>
+                </div>
+              </div>
+              <div class="voice-command-item">
+                <div>
+                  <div class="voice-command-phrase">"Готово стол 3"</div>
+                  <div class="voice-command-action">Отметить готовым</div>
+                </div>
+              </div>
+              <div class="voice-command-item">
+                <div>
+                  <div class="voice-command-phrase">"Оплатить стол 5"</div>
+                  <div class="voice-command-action">Отметить оплачен</div>
+                </div>
+              </div>
+              <div class="voice-command-item">
+                <div>
+                  <div class="voice-command-phrase">"На кухню стол 2"</div>
+                  <div class="voice-command-action">Передать на кухню</div>
+                </div>
+              </div>
+              <div class="voice-command-item">
+                <div>
+                  <div class="voice-command-phrase">"Подан стол 7"</div>
+                  <div class="voice-command-action">Отметить поданным</div>
+                </div>
+              </div>
+              <div class="voice-command-item">
+                <div>
+                  <div class="voice-command-phrase">"Отмена стол 4"</div>
+                  <div class="voice-command-action">Удалить заказ</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================== ORDERS PAGE ====================== -->
+      <section data-page="orders" class="page" role="region" aria-label="Заказы">
+        <header class="page-header">
+          <h1>📋 Заказы</h1>
+          <div class="header-actions">
+            <button id="header-theme-toggle-orders" class="btn-icon" type="button" aria-label="Переключить тему">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            </button>
+          </div>
+        </header>
+
+        <div class="page-body">
+          <!-- New Order Form -->
+          <div class="card add-order-section">
+            <div class="card-header">
+              <h3 class="card-title">➕ Новый заказ</h3>
+              <button id="voice-order-btn" class="btn-voice-inline" type="button" aria-label="Голосовой ввод заказа">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><line x1="19" y1="10" x2="19" y2="12a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+              </button>
+            </div>
+
+            <!-- Table select -->
+            <div class="add-order-row">
+              <select id="order-table-select" class="form-select" style="flex:0 0 auto;min-width:140px;" aria-label="Выберите стол">
+                <option value="">Выберите стол</option>
+              </select>
+            </div>
+
+            <!-- Menu categories -->
+            <div class="filter-tabs" role="tablist" aria-label="Категории меню">
+              <button class="filter-tab" data-menu-cat="soups" role="tab" type="button">🥣 Супы</button>
+              <button class="filter-tab" data-menu-cat="salads" role="tab" type="button">🥗 Салаты</button>
+              <button class="filter-tab" data-menu-cat="starters" role="tab" type="button">🥖 Закуски</button>
+              <button class="filter-tab active" data-menu-cat="hot" role="tab" type="button">🔥 Горячее</button>
+              <button class="filter-tab" data-menu-cat="drinks" role="tab" type="button">🥤 Напитки</button>
+              <button class="filter-tab" data-menu-cat="desserts" role="tab" type="button">🍰 Десерты</button>
+            </div>
+
+            <!-- Menu items quick-add -->
+            <div>
+              <div style="font-size:var(--text-xs);color:var(--color-text-muted);margin-bottom:var(--space-2);">
+                <span id="menu-category-label">🔥 Горячее</span> — нажмите чтобы добавить
+              </div>
+              <div id="menu-quick-grid" class="menu-quick-grid"></div>
+            </div>
+
+            <!-- Cart -->
+            <div>
+              <div style="font-size:var(--text-sm);font-weight:600;color:var(--color-text);margin-bottom:var(--space-2);display:flex;align-items:center;gap:var(--space-2);">
+                🛒 Заказ <span id="cart-count" style="background:var(--color-primary);color:white;padding:1px 8px;border-radius:var(--radius-full);font-size:var(--text-xs);">0</span>
+              </div>
+              <div id="cart-items" class="cart-items"></div>
+              <div class="cart-total">
+                <span>Итого:</span>
+                <span id="cart-total-value">0 ₽</span>
+              </div>
+            </div>
+
+            <button id="submit-order-btn" class="btn-primary" type="button" disabled style="width:100%;justify-content:center;display:flex;align-items:center;gap:var(--space-2);">
+              <span>Отправить заказ</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </button>
+          </div>
+
+          <!-- Filter -->
+          <div class="filter-tabs" role="tablist" aria-label="Фильтр заказов">
+            <button class="filter-tab" data-filter="all" role="tab" type="button">Все</button>
+            <button class="filter-tab active" data-filter="active" role="tab" type="button">Активные</button>
+            <button class="filter-tab" data-filter="kitchen" role="tab" type="button">🍳 Кухня</button>
+            <button class="filter-tab" data-filter="ready" role="tab" type="button">✅ Готово</button>
+            <button class="filter-tab" data-filter="served" role="tab" type="button">🍽️ Подано</button>
+            <button class="filter-tab" data-filter="paid" role="tab" type="button">💳 Оплачено</button>
+          </div>
+
+          <!-- Orders List -->
+          <div id="order-list" class="task-list" role="list" aria-label="Список заказов"></div>
+        </div>
+      </section>
+
+      <!-- ====================== SETTINGS PAGE ====================== -->
+      <section data-page="settings" class="page" role="region" aria-label="Настройки">
+        <header class="page-header">
+          <h1>⚙️ Настройки</h1>
+          <div class="header-actions">
+            <button id="header-theme-toggle-settings" class="btn-icon" type="button" aria-label="Переключить тему">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            </button>
+          </div>
+        </header>
+
+        <div class="page-body">
+          <!-- Appearance -->
+          <div class="settings-group">
+            <div class="settings-group-title">Оформление</div>
+            <div class="settings-item">
+              <div class="settings-item-info">
+                <span class="settings-item-label">Тёмная тема</span>
+                <span class="settings-item-desc">Тёмная или светлая тема</span>
+              </div>
+              <div class="settings-item-action">
+                <button id="theme-toggle" class="toggle active" type="button" role="switch" aria-checked="true" aria-label="Тёмная тема"></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Voice -->
+          <div class="settings-group">
+            <div class="settings-group-title">Голос</div>
+            <div class="settings-item">
+              <div class="settings-item-info">
+                <span class="settings-item-label">Голосовые подсказки</span>
+                <span class="settings-item-desc" id="voice-status">Доступно ✓</span>
+              </div>
+              <div class="settings-item-action">
+                <button id="voice-toggle" class="toggle active" type="button" role="switch" aria-checked="true" aria-label="Голосовые подсказки"></button>
+              </div>
+            </div>
+            <div class="settings-item">
+              <div class="settings-item-info">
+                <span class="settings-item-label">Скорость озвучки</span>
+                <span class="settings-item-desc" id="voice-rate-value">1.0x</span>
+              </div>
+              <div class="settings-item-action">
+                <input id="voice-rate" class="range-slider" type="range" min="0.5" max="2" step="0.1" value="1.0" aria-label="Скорость озвучки">
+              </div>
+            </div>
+          </div>
+
+          <!-- Data -->
+          <div class="settings-group">
+            <div class="settings-group-title">Данные</div>
+            <div class="settings-item">
+              <div class="settings-item-info">
+                <span class="settings-item-label">Заказов сохранено</span>
+                <span class="settings-item-desc">Хранятся в localStorage</span>
+              </div>
+              <div class="settings-item-action">
+                <span id="settings-order-count" style="font-weight:600;color:var(--color-text);font-size:var(--text-lg);">0</span>
+              </div>
+            </div>
+            <div class="settings-item">
+              <div class="settings-item-info">
+                <span class="settings-item-label">Экспорт данных</span>
+                <span class="settings-item-desc">Скачать резервную копию</span>
+              </div>
+              <div class="settings-item-action">
+                <button id="export-data" class="btn-primary" type="button" style="padding:6px 16px;font-size:var(--text-xs);">Экспорт</button>
+              </div>
+            </div>
+            <div class="settings-item">
+              <div class="settings-item-info">
+                <span class="settings-item-label">Удалить все заказы</span>
+                <span class="settings-item-desc">Это действие нельзя отменить</span>
+              </div>
+              <div class="settings-item-action">
+                <button id="clear-all-orders" class="btn-danger" type="button">Очистить</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Install -->
+          <div class="settings-group">
+            <div class="settings-group-title">Приложение</div>
+            <div class="settings-item">
+              <div class="settings-item-info">
+                <span class="settings-item-label">Установить приложение</span>
+                <span class="settings-item-desc">Быстрый доступ, работает офлайн</span>
+              </div>
+              <div class="settings-item-action">
+                <button id="install-settings-btn" class="btn-primary" type="button" style="padding:6px 16px;font-size:var(--text-xs);">Установить</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- About -->
+          <div class="card about-card">
+            <div class="about-logo">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM5 10a1 1 0 0 0-1 1 8 8 0 0 0 7 7.93V21h-2a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-2v-2.07A8 8 0 0 0 20 11a1 1 0 1 0-2 0 6 6 0 0 1-12 0 1 1 0 0 0-1-1z"/></svg>
+            </div>
+            <div class="about-name">WaiterFlow</div>
+            <div class="about-version">v1.0.0</div>
+            <div class="about-desc">Умный ассистент официанта. Управляйте заказами голосом, отслеживайте статусы, обслуживайте быстрее.</div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom Navigation (Mobile) -->
+    <nav class="bottom-nav" role="navigation" aria-label="Нижняя навигация">
+      <button class="bottom-nav-item active" data-nav="home" type="button" aria-label="Зал">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <span>Зал</span>
+      </button>
+      <button class="bottom-nav-item" data-nav="orders" type="button" aria-label="Заказы">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <span>Заказы</span>
+      </button>
+      <button class="bottom-nav-item" data-nav="settings" type="button" aria-label="Настройки">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span>Настройки</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Voice FAB -->
+  <button id="voice-fab" class="voice-fab" type="button" aria-label="Голосовое управление" title="Нажмите для голосовой команды">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><line x1="19" y1="10" x2="19" y2="12a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+  </button>
+
+  <!-- Voice Overlay -->
+  <div id="voice-overlay" class="voice-overlay" role="dialog" aria-label="Голосовой ввод" aria-live="polite">
+    <div class="voice-overlay-header">
+      <div class="voice-overlay-dot"></div>
+      <span class="voice-overlay-label">Слушаю...</span>
+    </div>
+    <div id="voice-transcript" class="voice-overlay-transcript">Слушаю...</div>
+    <div class="voice-overlay-hint">Скажите: "Заказ стол 5 борщ" или "Готово стол 3"</div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Scripts -->
+  <script src="voice.js"></script>
+  <script src="app.js"></script>
+
+</body>
+</html>
