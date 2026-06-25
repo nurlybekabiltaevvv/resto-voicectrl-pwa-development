@@ -1,222 +1,143 @@
-# 🎤 VoiceWaiter — Voice-Controlled PWA for Restaurants
+# VoiceOrder
 
-> Hands‑free order management system for waiters, built as a Progressive Web App (PWA).
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/nurlybekabiltaevvv/voice-controlled-pwa-development)
+[![PWA](https://img.shields.io/badge/PWA-Ready-4CAF50.svg)](https://github.com/nurlybekabiltaevvv/voice-controlled-pwa-development)
+[![Web Speech API](https://img.shields.io/badge/Web%20Speech%20API-Enabled-orange.svg)](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API)
+[![GitHub Pages](https://img.shields.io/badge/Hosted%20on-GitHub%20Pages-181717.svg)](https://pages.github.com/)
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)  
-[![PWA Ready](https://img.shields.io/badge/PWA-Ready-blue.svg)](https://web.dev/progressive-web-apps/)  
-[![Vanilla JS](https://img.shields.io/badge/JavaScript-Vanilla-yellow.svg)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)  
-[![Deploy](https://img.shields.io/badge/Deploy-GitHub%20Pages-green.svg)](#deployment)
+**VoiceOrder** is a modern Progressive Web Application (PWA) that enables hands-free ordering in restaurants using voice commands. The project includes **two specialized interfaces**: one for customers and one for waiters.
 
----
-
-## 📖 Overview
-
-**VoiceWaiter** is a voice-controlled Progressive Web Application designed for restaurant environments.  
-
-It enables waiters to:
-- Take orders using voice commands
-- Manage tables hands‑free
-- Reduce screen interaction
-- Improve speed and hygiene
-
-The project demonstrates real-world application of modern browser technologies including **Web Speech API**, **Service Workers**, and **PWA architecture**.
+Built as a portfolio project to demonstrate skills in **PWA development**, **Web Speech API**, **Service Workers**, and **voice interface design**.
 
 
 
-## 🚀 Live Demo
+## 🌟 Live Demo
 
-👉 https://your-username.github.io/resto-voicectrl-pwa-development/
-UI FRAME to go UI-RESTO-VOICE.jpg
-
-*(Replace with your actual GitHub Pages URL)*
-
-
-
-## 🎯 Problem It Solves
-
-In busy restaurants:
-
-- Waiters handle multiple tables simultaneously
-- Hands are often occupied
-- Touching devices repeatedly reduces hygiene
-- Typing orders takes time
-
-✅ VoiceWaiter solves this by enabling **hands-free interaction**.
-
-
+- **Customer Version**: https://nurlybekabiltaevvv.github.io/voice-controlled-pwa-development/
+- **Waiter Version**: https://nurlybekabiltaevvv.github.io/voice-controlled-pwa-development/waiter/
+- **or to go**: UI-RESTO-VOICE.jpg
 
 ## ✨ Key Features
 
-### 🎙 Voice Recognition
-- Real-time speech-to-text using Web Speech API
-- Natural voice commands for order entry
-- Instant UI updates
+### Customer Interface
+- Voice-based menu browsing
+- Add items to order using natural speech
+- Real-time order summary
+- Installable as a mobile app (PWA)
 
-### 🍽 Restaurant Logic
-- Table management system
-- Add items to specific tables
-- Clear table status
-- Generate bill command (UI-level)
+### Waiter (Staff) Interface
+- Fast voice order taking
+- Multi-table management
+- Voice commands for order status updates
+- Send orders to kitchen
+- Professional dashboard optimized for restaurant staff
 
-### 📱 Progressive Web App
-- Installable on Android, iOS, Desktop
+### Common Features
 - Offline support via Service Worker
-- Fast loading with caching
-- Standalone app experience
-
-### ⚡ Performance Focused
-- Zero frameworks
-- Lightweight architecture
-- Clean, modular JavaScript
+- Responsive design for mobile and tablet
+- High performance caching
+- Voice feedback using Speech Synthesis
 
 
 
-## 🛠 Tech Stack
+## 🛠 Technologies Used
 
-| Category | Technology |
-|----------|------------|
-| Frontend | HTML5, CSS3 |
-| Logic | Vanilla JavaScript |
-| Voice | Web Speech API |
-| Offline | Service Worker |
-| PWA | Web App Manifest |
-| Hosting | GitHub Pages |
-| Version Control | Git + GitHub |
+- **HTML5**, **CSS3**, **Vanilla JavaScript**
+- **Web Speech API** (Speech Recognition & Speech Synthesis)
+- **Progressive Web App (PWA)** — Manifest + Service Worker
+- **GitHub Pages** deployment
+- Mobile-First Responsive Design
 
 
 
-## 🏗 Architecture
-
-```
-index.html
-│
-├── styles.css          → UI styling
-├── app.js              → Core application logic
-├── voice.js            → Speech recognition module
-├── service-worker.js   → Offline caching
-├── manifest.json       → PWA configuration
-└── icon.svg            → App icon
-```
-
-### Flow:
-
-1. User presses microphone button
-2. `voice.js` activates SpeechRecognition
-3. Command is parsed
-4. `app.js` updates UI state
-5. Service Worker caches resources
-
-
-
-## 🎙 Example Voice Commands
-
-| Command | Action |
-|----------|--------|
-| "Add two steaks to table five" | Adds order |
-| "Clear table three" | Resets table |
-| "Show drinks menu" | Displays category |
-| "Bill table seven" | Prepares check |
-
----
-
-## 📦 Installation (Local Development)
-
-> ⚠ Service Worker requires HTTP/HTTPS (not file://)
-
-### Clone the repository:
+## 📁 Project Structure
 
 ```bash
-git clone https://github.com/your-username/voice-controlled-pwa-development.git
+voice-controlled-pwa-development/
+├── customer/               # Customer-facing version
+├── waiter/                 # Waiter/staff version
+├── assets/
+├── service-worker.js
+├── manifest.json
+├── README.md
+└── index.html (optional landing page)
+```
+
+
+
+## 🚀 Installation & Local Development
+
+```bash
+git clone https://github.com/nurlybekabiltaevvv/voice-controlled-pwa-development.git
 cd voice-controlled-pwa-development
+
+# Recommended way to run (Service Worker requires server)
+npx serve
+# or
+npx http-server
 ```
 
-### Run local server:
-
-```bash
-npx serve .
-```
-
-Open:
-
-```
-http://localhost:3000
-```
+> **Note**: This project will not work correctly if opened directly via `file://` due to Service Worker and PWA requirements.
 
 
 
-## 🌍 Deployment
+## 🌐 Deployment (GitHub Pages)
 
-This project is deployed using **GitHub Pages** via GitHub Actions.
+1. Go to repository **Settings → Pages**
+2. Set source to `main` branch (root folder)
+3. Save
 
-Each push to the `main` branch automatically triggers deployment.
-
-To configure:
-
-1. Go to **Settings → Pages**
-2. Set Source to **GitHub Actions**
+The app will be available at:
+`https://nurlybekabiltaevvv.github.io/resto-voicectrl-pwa-development/`
 
 
 
-## 📱 Install as App
+## 🎙 Voice Commands Examples
 
-1. Open in Chrome (recommended)
-2. Click the install icon in the address bar
-3. Add to Home Screen
-4. Launch like a native app
-
-
-
-## 🌐 Browser Compatibility
-
-| Feature | Chrome | Edge | Safari | Firefox |
-|----------|:------:|:----:|:------:|:-------:|
-| PWA Install | ✅ | ✅ | ⚠️ | ⚠️ |
-| Speech Recognition | ✅ | ✅ | ❌ | ❌ |
-| Service Worker | ✅ | ✅ | ✅ | ✅ |
-
-> Recommended browser: **Google Chrome**
+- *"Show me the menu"*
+- *"Add pizza to order"*
+- *"I want a coffee"*
+- *"What's my order?"*
+- *"Send order to kitchen"* (Waiter version)
 
 
 
-## 🧠 What This Project Demonstrates
+## 📱 PWA Features
 
-✅ Real-world problem solving  
-✅ Understanding of PWA architecture  
-✅ Experience with browser APIs  
-✅ Modular JavaScript design  
-✅ Offline-first approach  
-✅ Clean project structure  
-✅ Deployment automation  
-
-Perfect portfolio project for:
-- Frontend Developer
-- JavaScript Developer
-- PWA Developer
-- Junior / Middle Web Developer roles
+- Installable on Android and iOS
+- Works offline
+- Fast loading thanks to caching strategies
+- Native app-like experience
 
 
 
-## 🗺 Future Improvements
+## 🎯 Purpose & Learning Outcomes
 
-- Backend integration (Node.js / Firebase)
-- Multi-waiter synchronization
-- Voice command NLP improvements
-- Kitchen display system
-- Analytics dashboard
-- Dark mode
-- Unit testing
+This project was developed to demonstrate:
 
-
-
-## 📜 License
-
-MIT License
+- Deep understanding of Progressive Web Applications
+- Integration of browser voice technologies
+- Dual-role system architecture (Customer + Staff)
+- Clean, maintainable vanilla JavaScript code
+- Real-world problem solving in the HoReCa industry
 
 
 
-## 👨‍💻 Author
+## 📄 License
+
+This project is open-sourced under the **MIT License**.
+
+
+
+## Author
 
 **Nurlybek Abiltaev**
 
-GitHub: https://github.com/nurlbekabiltaevvv  
-Email: nurlybekabiltaevvv@gmail.com
+- GitHub: @nurlybekabiltaevvv
+- https://github.com/nurlybekabiltaevvv
+- gmail: nurlbekabiltaevvv@gmail.com
+
+
+**⭐ Feel free to star this repository if you found it useful!**
+
