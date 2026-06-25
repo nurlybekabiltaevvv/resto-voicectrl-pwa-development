@@ -16,7 +16,7 @@ Built as a portfolio project to demonstrate skills in **PWA development**, **Web
 
 - **Customer Version**: https://nurlybekabiltaevvv.github.io/voice-controlled-pwa-development/
 - **Waiter Version**: https://nurlybekabiltaevvv.github.io/resto-voicectrl-pwa-development/
-- **or to go**: UI-RESTO-VOICE.jpg
+- **or to go**: UI-RESTO-VOICECTRL-FRAME.jpg
 
 ## ✨ Key Features
 
